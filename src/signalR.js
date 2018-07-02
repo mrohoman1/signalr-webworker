@@ -440,10 +440,12 @@ const jQueryShim = require('./jQueryShim');
                 parser = window.document.createElement("a");
 
             connection.lastError = null;
-
+                
+            connection.extraHeaders = options.extraHeaders;
+            
             // Persist the deferral so that if start is called multiple times the same deferral is used.
             connection._deferral = deferred;
-
+            
             if (!connection.json) {
                 // no JSON!
                 throw new Error("SignalR: No JSON parser found. Please ensure json2.js is referenced before the SignalR.js file if you need to support clients without native JSON parsing support, e.g. IE<8.");
@@ -745,13 +747,13 @@ const jQueryShim = require('./jQueryShim');
 
                     if ($.isArray(config.transport)) {
                         $.each(config.transport, function (_, transport) {
-                            if ($.inArray(transport, supportedTransports) >= 0) {
+                            if ($.inArray(supportedTransports, transport)) {
                                 transports.push(transport);
                             }
                         });
                     } else if (config.transport === "auto") {
                         transports = supportedTransports;
-                    } else if ($.inArray(config.transport, supportedTransports) >= 0) {
+                    } else if ($.inArray(supportedTransports, transport)) {
                         transports.push(config.transport);
                     }
 
@@ -1170,7 +1172,8 @@ const jQueryShim = require('./jQueryShim');
                     data: {},
                     xhrFields: { withCredentials: connection.withCredentials },
                     contentType: connection.contentType,
-                    dataType: connection.ajaxDataType
+                    dataType: connection.ajaxDataType,
+                    extraHeaders: connection.extraHeaders
                 }, options));
         },
 

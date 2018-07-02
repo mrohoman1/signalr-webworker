@@ -1,4 +1,8 @@
 # signalr-no-jquery
+
+## Original version
+Original (https://github.com/dvlp/signalr-no-jquery)
+
 ## SignalR JS Client with shimmed jQuery not polluting global namespace
 
 jQuery shim borrowed from [react-native-signalR](https://github.com/olofd/react-native-signalr)

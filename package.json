@@ -23,6 +23,7 @@
   "keywords": [
     "signalr"
   ],
+  "types": "./index.d.ts",
   "license": "Apache-2.0",
   "licenses": [
     {
@@ -40,5 +41,5 @@
   "scripts": {
     "build": "babel src --presets babel-preset-minify-es2015 --out-dir build"
   },
-  "version": "1.0.2"
+  "version": "1.0.7"
 }

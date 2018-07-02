@@ -440,9 +440,11 @@ const jQueryShim = require('./jQueryShim');
                 parser = window.document.createElement("a");
 
             connection.lastError = null;
-                
-            connection.extraHeaders = options.extraHeaders;
             
+            if(options){
+                connection.extraHeaders = options.extraHeaders;
+            }
+
             // Persist the deferral so that if start is called multiple times the same deferral is used.
             connection._deferral = deferred;
             

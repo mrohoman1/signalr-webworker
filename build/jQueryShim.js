@@ -1,88 +1,99 @@
 'use strict';
 
-const jQueryDeferred = require('jquery-deferred'),
-      jQueryParam = require('jquery-param'),
-      jqueryFunction = function (a) {
-  let b = a.events || {};
+var jQueryDeferred = require('jquery-deferred');
+var jQueryParam = require('jquery-param');
 
-  if (a && a === a.window) return {
-    0: a,
-    load: handler => a.addEventListener('load', handler, !1),
-    bind: (event, handler) => a.addEventListener(event, handler, !1),
-    unbind: (event, handler) => a.removeEventListener(event, handler, !1)
+var jqueryFunction = function jqueryFunction(subject) {
+  var events = subject.events || {};
+
+  if (subject && subject === subject.window) return {
+    0: subject,
+    load: function load(handler) {
+      return subject.addEventListener('load', handler, false);
+    },
+    bind: function bind(event, handler) {
+      return subject.addEventListener(event, handler, false);
+    },
+    unbind: function unbind(event, handler) {
+      return subject.removeEventListener(event, handler, false);
+    }
   };
 
   return {
-    0: a,
+    0: subject,
 
-    unbind(c, d) {
-      let f = b[c] || [];
+    unbind: function unbind(event, handler) {
+      var handlers = events[event] || [];
 
-      if (d) {
-        let g = f.indexOf(d);
-        if (g !== -1) f.splice(g, 1);
-      } else f = [];
+      if (handler) {
+        var idx = handlers.indexOf(handler);
+        if (idx !== -1) handlers.splice(idx, 1);
+      } else handlers = [];
 
-      b[c] = f;
-      a.events = b;
+      events[event] = handlers;
+      subject.events = events;
     },
-    bind(c, d) {
-      let f = b[c] || [];
-      b[c] = f.concat(d);
-      a.events = b;
+    bind: function bind(event, handler) {
+      var current = events[event] || [];
+      events[event] = current.concat(handler);
+      subject.events = events;
     },
-    triggerHandler(c, d) {
-      let f = b[c] || [];
-      f.forEach(g => {
-        if (d && d[0] && d[0].type === void 0) {
-          d = [{
-            type: c
-          }].concat(d || []);
+    triggerHandler: function triggerHandler(event, args) {
+      var _this = this;
+
+      var handlers = events[event] || [];
+      handlers.forEach(function (fn) {
+        if (args && args[0] && args[0].type === undefined) {
+          args = [{
+            type: event
+          }].concat(args || []);
         } else {
-          d = d || [];
+          args = args || [];
         }
 
-        g.apply(this, d);
+        fn.apply(_this, args);
       });
     }
   };
-},
-      xhr = function () {
+};
+
+var xhr = function xhr() {
   try {
     return new window.XMLHttpRequest();
   } catch (e) {}
-},
-      ajax = function (a) {
-  const b = xhr();
-  b.onreadystatechange = () => {
-    if (b.readyState !== 4) {
+};
+
+var ajax = function ajax(options) {
+  var request = xhr();
+  request.onreadystatechange = function () {
+    if (request.readyState !== 4) {
       return;
     }
 
-    if (b.status === 200 && !b._hasError) {
+    if (request.status === 200 && !request._hasError) {
       try {
-        a.success && a.success(JSON.parse(b.responseText));
+        options.success && options.success(JSON.parse(request.responseText));
       } catch (e) {
-        a.error && a.error(b);
+        options.error && options.error(request);
       }
     } else {
-      a.error && a.error(b);
+      options.error && options.error(request);
     }
   };
 
-  b.withCredentials = a.xhrFields.withCredentials;
-  b.open(a.type, a.url);
-  b.setRequestHeader('content-type', a.contentType);
-  if (a.extraHeaders) {
-    a.extraHeaders.forEach(c => {
-      b.setRequestHeader(c.key, c.value);
+  request.withCredentials = options.xhrFields.withCredentials;
+  request.open(options.type, options.url);
+  request.setRequestHeader('content-type', options.contentType);
+  if (options.extraHeaders) {
+    options.extraHeaders.forEach(function (header) {
+      request.setRequestHeader(header.key, header.value);
     });
   }
-  b.send(a.data.data && `data=${a.data.data}`);
+  request.send(options.data.data && 'data=' + options.data.data);
 
   return {
-    abort: function (c) {
-      return b.abort(c);
+    abort: function abort(reason) {
+      return request.abort(reason);
     }
   };
 };
@@ -90,15 +101,25 @@ const jQueryDeferred = require('jquery-deferred'),
 module.exports = jQueryDeferred.extend(jqueryFunction, jQueryDeferred, {
   defaultAjaxHeaders: null,
   ajax: ajax,
-  inArray: (arr, item) => arr.indexOf(item) !== -1,
-  trim: str => str && str.trim(),
-  isEmptyObject: obj => !obj || Object.keys(obj).length === 0,
-  makeArray: arr => [].slice.call(arr, 0),
-  param: obj => jQueryParam(obj),
+  inArray: function inArray(arr, item) {
+    return arr.indexOf(item) !== -1;
+  },
+  trim: function trim(str) {
+    return str && str.trim();
+  },
+  isEmptyObject: function isEmptyObject(obj) {
+    return !obj || Object.keys(obj).length === 0;
+  },
+  makeArray: function makeArray(arr) {
+    return [].slice.call(arr, 0);
+  },
+  param: function param(obj) {
+    return jQueryParam(obj);
+  },
   support: {
     cors: function () {
-      const a = xhr();
-      return !!a && "withCredentials" in a;
+      var xhrObj = xhr();
+      return !!xhrObj && "withCredentials" in xhrObj;
     }()
   }
 });

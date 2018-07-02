@@ -39,7 +39,7 @@
     "url": "git+https://github.com/flipdishbytes/signalr-no-jquery.git"
   },
   "scripts": {
-    "build": "babel src --presets babel-preset-minify-es2015 --out-dir build"
+    "build": "babel src --presets babel-preset-es2015 --out-dir build"
   },
-  "version": "1.0.11"
+  "version": "1.0.12"
 }

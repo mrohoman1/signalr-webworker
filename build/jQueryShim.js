@@ -1,90 +1,88 @@
 'use strict';
 
-var jQueryDeferred = require('jquery-deferred');
-var jQueryParam = require('jquery-param');
+const jQueryDeferred = require('jquery-deferred'),
+      jQueryParam = require('jquery-param'),
+      jqueryFunction = function (a) {
+  let b = a.events || {};
 
-var jqueryFunction = function jqueryFunction(subject) {
-  var events = subject.events || {};
-
-  if (subject && subject === subject.window) return {
-    0: subject,
-    load: function load(handler) {
-      return subject.addEventListener('load', handler, false);
-    },
-    bind: function bind(event, handler) {
-      return subject.addEventListener(event, handler, false);
-    },
-    unbind: function unbind(event, handler) {
-      return subject.removeEventListener(event, handler, false);
-    }
+  if (a && a === a.window) return {
+    0: a,
+    load: handler => a.addEventListener('load', handler, !1),
+    bind: (event, handler) => a.addEventListener(event, handler, !1),
+    unbind: (event, handler) => a.removeEventListener(event, handler, !1)
   };
 
   return {
-    0: subject,
+    0: a,
 
-    unbind: function unbind(event, handler) {
-      var handlers = events[event] || [];
+    unbind(c, d) {
+      let f = b[c] || [];
 
-      if (handler) {
-        var idx = handlers.indexOf(handler);
-        if (idx !== -1) handlers.splice(idx, 1);
-      } else handlers = [];
+      if (d) {
+        let g = f.indexOf(d);
+        if (g !== -1) f.splice(g, 1);
+      } else f = [];
 
-      events[event] = handlers;
-      subject.events = events;
+      b[c] = f;
+      a.events = b;
     },
-    bind: function bind(event, handler) {
-      var current = events[event] || [];
-      events[event] = current.concat(handler);
-      subject.events = events;
+    bind(c, d) {
+      let f = b[c] || [];
+      b[c] = f.concat(d);
+      a.events = b;
     },
-    triggerHandler: function triggerHandler(event, args) {
-      var _this = this;
-
-      var handlers = events[event] || [];
-      handlers.forEach(function (fn) {
-        if (args && args[0] && args[0].type === undefined) {
-          args = [{
-            type: event
-          }].concat(args || []);
+    triggerHandler(c, d) {
+      let f = b[c] || [];
+      f.forEach(g => {
+        if (d && d[0] && d[0].type === void 0) {
+          d = [{
+            type: c
+          }].concat(d || []);
         } else {
-          args = args || [];
+          d = d || [];
         }
 
-        fn.apply(_this, args);
+        g.apply(this, d);
       });
     }
   };
-};
-
-var xhr = function xhr() {
+},
+      xhr = function () {
   try {
     return new window.XMLHttpRequest();
   } catch (e) {}
-};
-
-var ajax = function ajax(options) {
-  var request = xhr();
-  request.onreadystatechange = function () {
-    if (request.readyState !== 4) {
+},
+      ajax = function (a) {
+  const b = xhr();
+  b.onreadystatechange = () => {
+    if (b.readyState !== 4) {
       return;
     }
 
-    if (request.status === 200 && !request._hasError) {
-      options.success && options.success(JSON.parse(request.responseText));
+    if (b.status === 200 && !b._hasError) {
+      try {
+        a.success && a.success(JSON.parse(b.responseText));
+      } catch (e) {
+        a.error && a.error(b);
+      }
     } else {
-      options.error && options.error(request);
+      a.error && a.error(b);
     }
   };
 
-  request.open(options.type, options.url);
-  request.setRequestHeader('content-type', options.contentType);
-
-  request.send(options.data.data && 'data=' + options.data.data);
+  b.withCredentials = a.xhrFields.withCredentials;
+  b.open(a.type, a.url);
+  b.setRequestHeader('content-type', a.contentType);
+  if (a.extraHeaders) {
+    a.extraHeaders.forEach(c => {
+      b.setRequestHeader(c.key, c.value);
+    });
+  }
+  b.send(a.data.data && `data=${a.data.data}`);
 
   return {
-    abort: function abort(reason) {
-      return request.abort(reason);
+    abort: function (c) {
+      return b.abort(c);
     }
   };
 };
@@ -92,25 +90,15 @@ var ajax = function ajax(options) {
 module.exports = jQueryDeferred.extend(jqueryFunction, jQueryDeferred, {
   defaultAjaxHeaders: null,
   ajax: ajax,
-  inArray: function inArray(arr, item) {
-    return arr.indexOf(item) !== -1;
-  },
-  trim: function trim(str) {
-    return str && str.trim();
-  },
-  isEmptyObject: function isEmptyObject(obj) {
-    return !obj || Object.keys(obj).length === 0;
-  },
-  makeArray: function makeArray(arr) {
-    return [].slice.call(arr, 0);
-  },
-  param: function param(obj) {
-    return jQueryParam(obj);
-  },
+  inArray: (arr, item) => arr.indexOf(item) !== -1,
+  trim: str => str && str.trim(),
+  isEmptyObject: obj => !obj || Object.keys(obj).length === 0,
+  makeArray: arr => [].slice.call(arr, 0),
+  param: obj => jQueryParam(obj),
   support: {
     cors: function () {
-      var xhrObj = xhr();
-      return !!xhrObj && "withCredentials" in xhrObj;
+      const a = xhr();
+      return !!a && "withCredentials" in a;
     }()
   }
 });

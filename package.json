@@ -40,5 +40,5 @@
   "scripts": {
     "build": "babel src --presets babel-preset-minify-es2015 --out-dir build"
   },
-  "version": "1.0.1"
+  "version": "1.0.2"
 }

@@ -441,10 +441,6 @@ const jQueryShim = require('./jQueryShim');
 
             connection.lastError = null;
             
-            if(options){
-                connection.extraHeaders = options.extraHeaders;
-            }
-
             // Persist the deferral so that if start is called multiple times the same deferral is used.
             connection._deferral = deferred;
             
@@ -461,6 +457,7 @@ const jQueryShim = require('./jQueryShim');
                 if ($.type(config.callback) === "function") {
                     callback = config.callback;
                 }
+                connection.extraHeaders = options.extraHeaders;
             }
 
             config.transport = validateTransport(config.transport, connection);

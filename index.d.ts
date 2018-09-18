@@ -26,6 +26,7 @@ export interface Connection {
     createHubProxy(hubName: string): Proxy;
 
     start(options?: any, callback?: any): any;
+    stop(async?:boolean, notifyServer?:boolean): any;
 }
 
 export interface Proxy {

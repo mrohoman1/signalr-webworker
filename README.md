@@ -1,7 +1,7 @@
 # signalr-webworker
 
 ## Original version
-Original (https://github.com/trutoo/signalr-webworker)
+Original (https://github.com/DVLP/signalr-no-jquery)
 
 ## SignalR JS Client with shimmed jQuery not polluting global namespace
 

@@ -1,9 +1,8 @@
 'use strict';
 
 const jQueryDeferred = require('jquery-deferred');
-const jQueryParam = require('jquery-param');
 
-const jqueryFunction = function(subject) {
+const jqueryFunction = function (subject) {
   let events = subject.events || {};
 
   if (subject && subject === subject.window)
@@ -50,14 +49,13 @@ const jqueryFunction = function(subject) {
     }
   };
 };
-
-const xhr = function() {
+const xhr = function () {
   try {
     return new window.XMLHttpRequest();
-  } catch (e) {}
+  } catch (e) { }
 };
 
-const ajax = function(options) {
+const ajax = function (options) {
   const request = xhr();
   request.onreadystatechange = () => {
     if (request.readyState !== 4) {
@@ -78,15 +76,15 @@ const ajax = function(options) {
   request.withCredentials = options.xhrFields.withCredentials;
   request.open(options.type, options.url);
   request.setRequestHeader('content-type', options.contentType);
-  if(options.extraHeaders){
+  if (options.extraHeaders) {
     options.extraHeaders.forEach(header => {
-      request.setRequestHeader(header.key, header.value);      
+      request.setRequestHeader(header.key, header.value);
     });
   }
   request.send(options.data.data && `data=${options.data.data}`);
 
   return {
-    abort: function(reason) {
+    abort: function (reason) {
       return request.abort(reason);
     }
   };
@@ -98,16 +96,14 @@ module.exports = jQueryDeferred.extend(
   {
     defaultAjaxHeaders: null,
     ajax: ajax,
-    inArray: (arr,item) => arr.indexOf(item) !== -1,
+    inArray: (arr, item) => arr.indexOf(item) !== -1,
     trim: str => str && str.trim(),
     isEmptyObject: obj => !obj || Object.keys(obj).length === 0,
-    makeArray: arr => [].slice.call(arr,0),
-    param: obj => jQueryParam(obj),
+    makeArray: arr => [].slice.call(arr, 0),
     support: {
-      cors: (function() {
+      cors: (function () {
         const xhrObj = xhr();
         return !!xhrObj && ("withCredentials" in xhrObj);
       })()
     }
-  })
-  
+  });

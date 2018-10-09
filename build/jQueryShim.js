@@ -1,7 +1,6 @@
 'use strict';
 
 var jQueryDeferred = require('jquery-deferred');
-var jQueryParam = require('jquery-param');
 
 var jqueryFunction = function jqueryFunction(subject) {
   var events = subject.events || {};
@@ -57,14 +56,8 @@ var jqueryFunction = function jqueryFunction(subject) {
   };
 };
 
-var xhr = function xhr() {
-  try {
-    return new window.XMLHttpRequest();
-  } catch (e) {}
-};
-
 var ajax = function ajax(options) {
-  var request = xhr();
+  var request = new XMLHttpRequest();
   request.onreadystatechange = function () {
     if (request.readyState !== 4) {
       return;
@@ -113,12 +106,9 @@ module.exports = jQueryDeferred.extend(jqueryFunction, jQueryDeferred, {
   makeArray: function makeArray(arr) {
     return [].slice.call(arr, 0);
   },
-  param: function param(obj) {
-    return jQueryParam(obj);
-  },
   support: {
     cors: function () {
-      var xhrObj = xhr();
+      var xhrObj = new XMLHttpRequest();
       return !!xhrObj && "withCredentials" in xhrObj;
     }()
   }

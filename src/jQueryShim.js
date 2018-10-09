@@ -49,14 +49,9 @@ const jqueryFunction = function (subject) {
     }
   };
 };
-const xhr = function () {
-  try {
-    return new window.XMLHttpRequest();
-  } catch (e) { }
-};
 
 const ajax = function (options) {
-  const request = xhr();
+  const request = new XMLHttpRequest();
   request.onreadystatechange = () => {
     if (request.readyState !== 4) {
       return;
@@ -102,7 +97,7 @@ module.exports = jQueryDeferred.extend(
     makeArray: arr => [].slice.call(arr, 0),
     support: {
       cors: (function () {
-        const xhrObj = xhr();
+        const xhrObj = new XMLHttpRequest();
         return !!xhrObj && ("withCredentials" in xhrObj);
       })()
     }

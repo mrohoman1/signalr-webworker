@@ -369,8 +369,7 @@ const jQueryShim = require('./jQueryShim');
           jsonp: false
         },
         initialize,
-        deferred = connection._deferral || $.Deferred(), // Check to see if there is a pre-existing deferral that's being built on, if so we want to keep using it                parser = window.document.createElement("a");
-        parser = window.document.createElement("a");
+        deferred = connection._deferral || $.Deferred(); // Check to see if there is a pre-existing deferral that's being built on, if so we want to keep using it
 
       connection.lastError = null;
 

@@ -78,7 +78,11 @@ const ajax = function(options) {
   request.withCredentials = options.xhrFields.withCredentials;
   request.open(options.type, options.url);
   request.setRequestHeader('content-type', options.contentType);
-
+  if(options.extraHeaders){
+    options.extraHeaders.forEach(header => {
+      request.setRequestHeader(header.key, header.value);      
+    });
+  }
   request.send(options.data.data && `data=${options.data.data}`);
 
   return {

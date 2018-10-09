@@ -461,6 +461,7 @@ var jQueryShim = require('./jQueryShim');
                 if ($.type(config.callback) === "function") {
                     callback = config.callback;
                 }
+                connection.extraHeaders = options.extraHeaders;
             }
 
             config.transport = validateTransport(config.transport, connection);
@@ -745,13 +746,13 @@ var jQueryShim = require('./jQueryShim');
 
                     if ($.isArray(config.transport)) {
                         $.each(config.transport, function (_, transport) {
-                            if ($.inArray(transport, supportedTransports) >= 0) {
+                            if ($.inArray(supportedTransports, transport)) {
                                 transports.push(transport);
                             }
                         });
                     } else if (config.transport === "auto") {
                         transports = supportedTransports;
-                    } else if ($.inArray(config.transport, supportedTransports) >= 0) {
+                    } else if ($.inArray(supportedTransports, transport)) {
                         transports.push(config.transport);
                     }
 
@@ -1169,7 +1170,8 @@ var jQueryShim = require('./jQueryShim');
                 data: {},
                 xhrFields: { withCredentials: connection.withCredentials },
                 contentType: connection.contentType,
-                dataType: connection.ajaxDataType
+                dataType: connection.ajaxDataType,
+                extraHeaders: connection.extraHeaders
             }, options));
         },
 

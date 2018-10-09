@@ -1,7 +1,7 @@
 version: 2
 
 defaults: &defaults
-  working_directory: ~/signalr-no-jquery
+  working_directory: ~/signalr-webworker
   docker:
     - image: circleci/node:8.9.1
 jobs:

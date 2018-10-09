@@ -1,10 +1,10 @@
 {
   "author": {
-    "name": "Pawel",
-    "url": "https://github.com/dvlp"
+    "name": "Trutoo",
+    "url": "https://github.com/trutoo"
   },
   "bugs": {
-    "url": "https://github.com/flipdishbytes/signalr-no-jquery/issues"
+    "url": "https://github.com/trutoo/signalr-webworker/issues"
   },
   "description": "Javascript SignalR client without jQuery dependency",
   "dependencies": {
@@ -19,7 +19,7 @@
     "babel-preset-minify-es2015": "0.0.3",
     "babel-preset-stage-0": "*"
   },
-  "homepage": "https://github.com/flipdishbytes/signalr-no-jquery",
+  "homepage": "https://github.com/trutoo/signalr-webworker",
   "keywords": [
     "signalr"
   ],
@@ -32,11 +32,11 @@
     }
   ],
   "main": "build/signalR.js",
-  "name": "@flipdish/signalr-no-jquery",
+  "name": "signalr-webworker",
   "readme": "README.md",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/flipdishbytes/signalr-no-jquery.git"
+    "url": "git+https://github.com/trutoo/signalr-webworker.git"
   },
   "scripts": {
     "build": "babel src --presets babel-preset-es2015 --out-dir build"

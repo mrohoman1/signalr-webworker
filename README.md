@@ -4,7 +4,7 @@ _!!! WORK-IN-PROGRESS !!!_
 
 ## Original version
 
-Original (https://github.com/DVLP/signalr-no-jquery)
+[Original repository](https://github.com/DVLP/signalr-no-jquery)
 
 ## SignalR JS Client with shimmed jQuery not polluting global namespace
 

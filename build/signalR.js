@@ -1,12 +1,8 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+"use strict";
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var jQueryShim = require('./jQueryShim');
+var jQueryShim = require("./jQueryShim");
 
 /* jquery.signalR.core.js */
 /*!
@@ -21,7 +17,6 @@ var jQueryShim = require('./jQueryShim');
 /// <reference path="Scripts/jquery-1.6.4.js" />
 /// <reference path="jquery.signalR.version.js" />
 (function ($, undefined) {
-
   var resources = {
     nojQuery: "jQuery was not found. Please ensure jQuery is referenced before the SignalR client JavaScript file.",
     noTransportOnInit: "No transport could be initialized successfully. Try specifying a different transport or none at all for auto initialization.",
@@ -55,7 +50,7 @@ var jQueryShim = require('./jQueryShim');
     throw new Error(resources.nojQuery);
   }
 
-  var _signalR,
+  var signalR,
       _connection,
       _negotiateAbortText = "__Negotiate Aborted__",
       events = {
@@ -102,7 +97,7 @@ var jQueryShim = require('./jQueryShim');
     return false;
   },
       isDisconnecting = function isDisconnecting(connection) {
-    return connection.state === _signalR.connectionState.disconnected;
+    return connection.state === signalR.connectionState.disconnected;
   },
       supportsKeepAlive = function supportsKeepAlive(connection) {
     return connection._.keepAliveData.activated && connection.transport.supportsKeepAlive(connection);
@@ -114,9 +109,9 @@ var jQueryShim = require('./jQueryShim');
     // Without this check if a connection is stopped then started events will be bound multiple times.
     if (!connection._.configuredStopReconnectingTimeout) {
       onReconnectTimeout = function onReconnectTimeout(connection) {
-        var message = _signalR._.format(_signalR.resources.reconnectTimeout, connection.disconnectTimeout);
+        var message = signalR._.format(signalR.resources.reconnectTimeout, connection.disconnectTimeout);
         connection.log(message);
-        $(connection).triggerHandler(events.onError, [_signalR._.error(message, /* source */"TimeoutException")]);
+        $(connection).triggerHandler(events.onError, [signalR._.error(message, /* source */"TimeoutException")]);
         connection.stop( /* async */false, /* notifyServer */false);
       };
 
@@ -124,7 +119,7 @@ var jQueryShim = require('./jQueryShim');
         var connection = this;
 
         // Guard against state changing in a previous user defined even handler
-        if (connection.state === _signalR.connectionState.reconnecting) {
+        if (connection.state === signalR.connectionState.reconnecting) {
           stopReconnectingTimeout = setTimeout(function () {
             onReconnectTimeout(connection);
           }, connection.disconnectTimeout);
@@ -132,7 +127,7 @@ var jQueryShim = require('./jQueryShim');
       });
 
       connection.stateChanged(function (data) {
-        if (data.oldState === _signalR.connectionState.reconnecting) {
+        if (data.oldState === signalR.connectionState.reconnecting) {
           // Clear the pending reconnect timeout check
           clearTimeout(stopReconnectingTimeout);
         }
@@ -142,7 +137,17 @@ var jQueryShim = require('./jQueryShim');
     }
   };
 
-  _signalR = function signalR(url, qs, logging) {
+  signalR = function (_signalR) {
+    function signalR(_x, _x2, _x3) {
+      return _signalR.apply(this, arguments);
+    }
+
+    signalR.toString = function () {
+      return _signalR.toString();
+    };
+
+    return signalR;
+  }(function (url, qs, logging) {
     /// <summary>Creates a new SignalR connection for the given url</summary>
     /// <param name="url" type="String">The URL of the long polling endpoint</param>
     /// <param name="qs" type="Object">
@@ -155,10 +160,10 @@ var jQueryShim = require('./jQueryShim');
     ///     console/log. Defaults to false.
     /// </param>
 
-    return new _signalR.fn.init(url, qs, logging);
-  };
+    return new signalR.fn.init(url, qs, logging);
+  });
 
-  _signalR._ = {
+  signalR._ = {
     defaultContentType: "application/x-www-form-urlencoded; charset=UTF-8",
 
     error: function error(message, source, context) {
@@ -195,30 +200,30 @@ var jQueryShim = require('./jQueryShim');
 
       if (config && !connection._.pingIntervalId && config.pingInterval) {
         connection._.pingIntervalId = setInterval(function () {
-          _signalR.transports._logic.pingServer(connection).fail(onFail);
+          signalR.transports._logic.pingServer(connection).fail(onFail);
         }, config.pingInterval);
       }
     }
   };
 
-  _signalR.events = events;
+  signalR.events = events;
 
-  _signalR.resources = resources;
+  signalR.resources = resources;
 
-  _signalR.ajaxDefaults = ajaxDefaults;
+  signalR.ajaxDefaults = ajaxDefaults;
 
-  _signalR.changeState = changeState;
+  signalR.changeState = changeState;
 
-  _signalR.isDisconnecting = isDisconnecting;
+  signalR.isDisconnecting = isDisconnecting;
 
-  _signalR.connectionState = {
+  signalR.connectionState = {
     connecting: 0,
     connected: 1,
     reconnecting: 2,
     disconnected: 4
   };
 
-  _signalR.hub = {
+  signalR.hub = {
     start: function start() {
       // This will get replaced with the real hub connection start method when hubs is referenced correctly
       throw new Error("SignalR: Error loading hubs. Ensure your hubs reference is correct, e.g. <script src='/signalr/js'></script>.");
@@ -235,7 +240,7 @@ var jQueryShim = require('./jQueryShim');
       // Go through transport array and remove an "invalid" tranports
       for (var i = requestedTransport.length - 1; i >= 0; i--) {
         var transport = requestedTransport[i];
-        if ($.type(transport) !== "string" || !_signalR.transports[transport]) {
+        if ($.type(transport) !== "string" || !signalR.transports[transport]) {
           connection.log("Invalid transport: " + transport + ", removing it from the transports list.");
           requestedTransport.splice(i, 1);
         }
@@ -246,7 +251,7 @@ var jQueryShim = require('./jQueryShim');
         connection.log("No transports remain within the specified transport array.");
         requestedTransport = null;
       }
-    } else if (!_signalR.transports[requestedTransport] && requestedTransport !== "auto") {
+    } else if (!signalR.transports[requestedTransport] && requestedTransport !== "auto") {
       connection.log("Invalid transport: " + requestedTransport.toString() + ".");
       requestedTransport = null;
     }
@@ -300,7 +305,7 @@ var jQueryShim = require('./jQueryShim');
     };
   }
 
-  _signalR.fn = _signalR.prototype = {
+  signalR.fn = signalR.prototype = {
     init: function init(url, qs, logging) {
       var $connection = $(this);
 
@@ -345,7 +350,7 @@ var jQueryShim = require('./jQueryShim');
 
     logging: false,
 
-    state: _signalR.connectionState.disconnected,
+    state: signalR.connectionState.disconnected,
 
     clientProtocol: "1.5",
 
@@ -404,9 +409,9 @@ var jQueryShim = require('./jQueryShim');
       connection._.config = config;
 
       // If we're already connecting just return the same deferral as the original connection start
-      if (connection.state === _signalR.connectionState.connecting) {
+      if (connection.state === signalR.connectionState.connecting) {
         return deferred.promise();
-      } else if (changeState(connection, _signalR.connectionState.disconnected, _signalR.connectionState.connecting) === false) {
+      } else if (changeState(connection, signalR.connectionState.disconnected, signalR.connectionState.connecting) === false) {
         // We're not connecting so try and transition into connecting.
         // If we fail to transition then we're either in connected or reconnecting.
 
@@ -444,10 +449,10 @@ var jQueryShim = require('./jQueryShim');
         deferred.resolve(connection);
       });
 
-      connection._.initHandler = _signalR.transports._logic.initHandler(connection);
+      connection._.initHandler = signalR.transports._logic.initHandler(connection);
 
       _initialize = function initialize(transports, index) {
-        var noTransportError = _signalR._.error(resources.noTransportOnInit);
+        var noTransportError = signalR._.error(resources.noTransportOnInit);
 
         index = index || 0;
         if (index >= transports.length) {
@@ -468,12 +473,12 @@ var jQueryShim = require('./jQueryShim');
         }
 
         // The connection was aborted
-        if (connection.state === _signalR.connectionState.disconnected) {
+        if (connection.state === signalR.connectionState.disconnected) {
           return;
         }
 
         var transportName = transports[index],
-            transport = _signalR.transports[transportName],
+            transport = signalR.transports[transportName],
             onFallback = function onFallback() {
           _initialize(transports, index + 1);
         };
@@ -486,16 +491,16 @@ var jQueryShim = require('./jQueryShim');
             connection.log("The start request succeeded. Transitioning to the connected state.");
 
             if (supportsKeepAlive(connection)) {
-              _signalR.transports._logic.monitorKeepAlive(connection);
+              signalR.transports._logic.monitorKeepAlive(connection);
             }
 
-            _signalR.transports._logic.startHeartbeat(connection);
+            signalR.transports._logic.startHeartbeat(connection);
 
             // Used to ensure low activity clients maintain their authentication.
             // Must be configured once a transport has been decided to perform valid ping requests.
-            _signalR._.configurePingInterval(connection);
+            signalR._.configurePingInterval(connection);
 
-            if (!changeState(connection, _signalR.connectionState.connecting, _signalR.connectionState.connected)) {
+            if (!changeState(connection, signalR.connectionState.connecting, signalR.connectionState.connected)) {
               connection.log("WARNING! The connection was not in the connecting state.");
             }
 
@@ -512,7 +517,7 @@ var jQueryShim = require('./jQueryShim');
 
       var url = connection.url + "/negotiate",
           onFailed = function onFailed(error, connection) {
-        var err = _signalR._.error(resources.errorOnNegotiate, error, connection._.negotiateRequest);
+        var err = signalR._.error(resources.errorOnNegotiate, error, connection._.negotiateRequest);
 
         $(connection).triggerHandler(events.onError, err);
         deferred.reject(err);
@@ -522,12 +527,12 @@ var jQueryShim = require('./jQueryShim');
 
       $(connection).triggerHandler(events.onStarting);
 
-      url = _signalR.transports._logic.prepareQueryString(connection, url);
+      url = signalR.transports._logic.prepareQueryString(connection, url);
 
       connection.log("Negotiating with '" + url + "'.");
 
       // Save the ajax negotiate request object so we can abort it if stop is called while the request is in flight.
-      connection._.negotiateRequest = _signalR.transports._logic.ajax(connection, {
+      connection._.negotiateRequest = signalR.transports._logic.ajax(connection, {
         url: url,
         error: function error(_error, statusText) {
           // We don't want to cause any errors if we're aborting our own negotiate request.
@@ -535,7 +540,8 @@ var jQueryShim = require('./jQueryShim');
             onFailed(_error, connection);
           } else {
             // This rejection will noop if the deferred has already been resolved or rejected.
-            deferred.reject(_signalR._.error(resources.stoppedWhileNegotiating, null /* error */, connection._.negotiateRequest));
+            deferred.reject(signalR._.error(resources.stoppedWhileNegotiating, null /* error */
+            , connection._.negotiateRequest));
           }
         },
         success: function success(result) {
@@ -548,7 +554,7 @@ var jQueryShim = require('./jQueryShim');
           try {
             res = connection._parseResponse(result);
           } catch (error) {
-            onFailed(_signalR._.error(resources.errorParsingNegotiateResponse, error), connection);
+            onFailed(signalR._.error(resources.errorParsingNegotiateResponse, error), connection);
             return;
           }
 
@@ -588,14 +594,14 @@ var jQueryShim = require('./jQueryShim');
           connection.reconnectWindow = connection.disconnectTimeout + (keepAliveData.timeout || 0);
 
           if (!res.ProtocolVersion || res.ProtocolVersion !== connection.clientProtocol) {
-            protocolError = _signalR._.error(_signalR._.format(resources.protocolIncompatible, connection.clientProtocol, res.ProtocolVersion));
+            protocolError = signalR._.error(signalR._.format(resources.protocolIncompatible, connection.clientProtocol, res.ProtocolVersion));
             $(connection).triggerHandler(events.onError, [protocolError]);
             deferred.reject(protocolError);
 
             return;
           }
 
-          $.each(_signalR.transports, function (key) {
+          $.each(signalR.transports, function (key) {
             if (key.indexOf("_") === 0 || key === "webSockets" && !res.TryWebSockets) {
               return true;
             }
@@ -638,12 +644,12 @@ var jQueryShim = require('./jQueryShim');
       /// <returns type="signalR" />
       var connection = this;
 
-      if (connection.state === _signalR.connectionState.disconnected) {
+      if (connection.state === signalR.connectionState.disconnected) {
         // Connection hasn't been started yet
         throw new Error("SignalR: Connection must be started before data can be sent. Call .start() before .send()");
       }
 
-      if (connection.state === _signalR.connectionState.connecting) {
+      if (connection.state === signalR.connectionState.connecting) {
         // Connection hasn't been started yet
         throw new Error("SignalR: Connection has not been fully initialized. Use .start().done() or .start().fail() to run logic after the connection has started.");
       }
@@ -748,7 +754,7 @@ var jQueryShim = require('./jQueryShim');
       // Always clean up private non-timeout based state.
       delete connection._.config;
 
-      if (connection.state === _signalR.connectionState.disconnected) {
+      if (connection.state === signalR.connectionState.disconnected) {
         return;
       }
 
@@ -766,7 +772,7 @@ var jQueryShim = require('./jQueryShim');
         }
 
         if (supportsKeepAlive(connection)) {
-          _signalR.transports._logic.stopMonitoringKeepAlive(connection);
+          signalR.transports._logic.stopMonitoringKeepAlive(connection);
         }
 
         connection.transport = null;
@@ -795,7 +801,7 @@ var jQueryShim = require('./jQueryShim');
       connection._.connectingMessageBuffer.clear();
 
       // Trigger the disconnect event
-      changeState(connection, connection.state, _signalR.connectionState.disconnected);
+      changeState(connection, connection.state, signalR.connectionState.disconnected);
       $(connection).triggerHandler(events.onDisconnect);
 
       return connection;
@@ -806,22 +812,22 @@ var jQueryShim = require('./jQueryShim');
     }
   };
 
-  _signalR.fn.init.prototype = _signalR.fn;
+  signalR.fn.init.prototype = signalR.fn;
 
-  _signalR.noConflict = function () {
+  signalR.noConflict = function () {
     /// <summary>Reinstates the original value of $.connection and returns the signalR object for manual assignment</summary>
     /// <returns type="signalR" />
-    if ($.connection === _signalR) {
+    if ($.connection === signalR) {
       $.connection = _connection;
     }
-    return _signalR;
+    return signalR;
   };
 
   if ($.connection) {
     _connection = $.connection;
   }
 
-  $.connection = $.signalR = _signalR;
+  $.connection = $.signalR = signalR;
 })(jQueryShim);
 /* jquery.signalR.transports.common.js */
 // Copyright (c) .NET Foundation. All rights reserved.
@@ -830,7 +836,6 @@ var jQueryShim = require('./jQueryShim');
 /// <reference path="jquery.signalR.core.js" />
 
 (function ($, undefined) {
-
   var signalR = $.signalR,
       events = $.signalR.events,
       changeState = $.signalR.changeState,
@@ -1001,7 +1006,8 @@ var jQueryShim = require('./jQueryShim');
 
   transportLogic = signalR.transports._logic = {
     ajax: function ajax(connection, options) {
-      return $.ajax($.extend( /*deep copy*/true, {}, $.signalR.ajaxDefaults, {
+      return $.ajax($.extend(
+      /*deep copy*/true, {}, $.signalR.ajaxDefaults, {
         type: "GET",
         data: {},
         xhrFields: { withCredentials: connection.withCredentials },
@@ -1088,7 +1094,7 @@ var jQueryShim = require('./jQueryShim');
         return url;
       }
 
-      if ((typeof qs === 'undefined' ? 'undefined' : _typeof(qs)) === "object") {
+      if ((typeof qs === "undefined" ? "undefined" : _typeof(qs)) === "object") {
         return url + appender + $.param(qs);
       }
 
@@ -1258,7 +1264,8 @@ var jQueryShim = require('./jQueryShim');
           if (data.Response === "started") {
             onSuccess();
           } else {
-            triggerStartError(signalR._.error(signalR._.format(signalR.resources.invalidStartResponse, result), null /* error */, xhr));
+            triggerStartError(signalR._.error(signalR._.format(signalR.resources.invalidStartResponse, result), null /* error */
+            , xhr));
           }
         },
         error: function error(xhr, statusText, _error4) {
@@ -1268,7 +1275,8 @@ var jQueryShim = require('./jQueryShim');
             // Stop has been called, no need to trigger the error handler
             // or stop the connection again with onStartError
             connection.log("The start request aborted because connection.stop() was called.");
-            rejectDeferred(signalR._.error(signalR.resources.stoppedDuringStartRequest, null /* error */, xhr));
+            rejectDeferred(signalR._.error(signalR.resources.stoppedDuringStartRequest, null /* error */
+            , xhr));
           }
         }
       });
@@ -1457,11 +1465,9 @@ var jQueryShim = require('./jQueryShim');
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-
 /// <reference path="jquery.signalR.transports.common.js" />
 
 (function ($, undefined) {
-
   var signalR = $.signalR,
       events = $.signalR.events,
       changeState = $.signalR.changeState,
@@ -1599,11 +1605,9 @@ var jQueryShim = require('./jQueryShim');
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-
 /// <reference path="jquery.signalR.transports.common.js" />
 
 (function ($, undefined) {
-
   var signalR = $.signalR,
       events = $.signalR.events,
       changeState = $.signalR.changeState,
@@ -1673,7 +1677,8 @@ var jQueryShim = require('./jQueryShim');
               connect = messageId === null,
               reconnecting = !connect,
               polling = !raiseReconnect,
-              url = transportLogic.getUrl(instance, that.name, reconnecting, polling, true /* use Post for longPolling */),
+              url = transportLogic.getUrl(instance, that.name, reconnecting, polling, true /* use Post for longPolling */
+          ),
               postData = {};
 
           if (instance.messageId) {
@@ -1773,7 +1778,6 @@ var jQueryShim = require('./jQueryShim');
               }
 
               if (!tryFailConnect(error)) {
-
                 // Increment our reconnect errors, we assume all errors to be reconnect errors
                 // In the case that it's our first error this will cause Reconnect to be fired
                 // after 1 second due to reconnectErrors being = 1.
@@ -1859,7 +1863,6 @@ var jQueryShim = require('./jQueryShim');
 /// <reference path="jquery.signalR.core.js" />
 
 (function ($, undefined) {
-
   var eventNamespace = ".hubProxy",
       signalR = $.signalR;
 
@@ -2014,7 +2017,12 @@ var jQueryShim = require('./jQueryShim');
           connection = that.connection,
           args = $.makeArray(arguments).slice(1),
           argValues = map(args, getArgValue),
-          data = { H: that.hubName, M: methodName, A: argValues, I: connection._.invocationCallbackId },
+          data = {
+        H: that.hubName,
+        M: methodName,
+        A: argValues,
+        I: connection._.invocationCallbackId
+      },
           d = $.Deferred(),
           callback = function callback(minResult) {
         var result = that._maximizeHubResponse(minResult),
@@ -2275,11 +2283,10 @@ var jQueryShim = require('./jQueryShim');
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-
 /// <reference path="jquery.signalR.core.js" />
 (function ($, undefined) {
   $.signalR.version = "2.2.1";
 })(jQueryShim);
 
-var hubConnection = exports.hubConnection = jQueryShim.hubConnection;
-var signalR = exports.signalR = jQueryShim.signalR;
+module.exports = hubConnection = jQueryShim.hubConnection;
+module.exports = signalR = jQueryShim.signalR;

@@ -2651,9 +2651,9 @@ const jQueryShim = require("./jQueryShim");
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 /// <reference path="jquery.signalR.core.js" />
-(function($, undefined) {
+(function($) {
   $.signalR.version = "2.2.1";
 })(jQueryShim);
 
-module.exports = hubConnection = jQueryShim.hubConnection;
-module.exports = signalR = jQueryShim.signalR;
+module.exports.hubConnection = jQueryShim.hubConnection;
+module.exports.signalR = jQueryShim.signalR;

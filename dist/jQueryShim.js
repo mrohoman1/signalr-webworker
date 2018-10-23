@@ -4,7 +4,6 @@ var jQueryDeferred = require('jquery-deferred');
 
 var jqueryFunction = function jqueryFunction(subject) {
   var events = subject.events || {};
-
   if (subject && subject === subject.window) return {
     0: subject,
     load: function load(handler) {
@@ -17,10 +16,8 @@ var jqueryFunction = function jqueryFunction(subject) {
       return subject.removeEventListener(event, handler, false);
     }
   };
-
   return {
     0: subject,
-
     unbind: function unbind(event, handler) {
       var handlers = events[event] || [];
 
@@ -58,6 +55,7 @@ var jqueryFunction = function jqueryFunction(subject) {
 
 var ajax = function ajax(options) {
   var request = new XMLHttpRequest();
+
   request.onreadystatechange = function () {
     if (request.readyState !== 4) {
       return;
@@ -77,13 +75,14 @@ var ajax = function ajax(options) {
   request.withCredentials = options.xhrFields.withCredentials;
   request.open(options.type, options.url);
   request.setRequestHeader('content-type', options.contentType);
+
   if (options.extraHeaders) {
     options.extraHeaders.forEach(function (header) {
       request.setRequestHeader(header.key, header.value);
     });
   }
-  request.send(options.data.data && 'data=' + options.data.data);
 
+  request.send(options.data.data && "data=".concat(options.data.data));
   return {
     abort: function abort(reason) {
       return request.abort(reason);

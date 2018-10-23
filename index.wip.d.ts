@@ -3,7 +3,7 @@
 // Definitions by: Martin Gjoshevski <https://github.com/gjoshevski>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.2
-declare module 'trutoo__signalr-webworker';
+declare module "signalr-webworker";
 
 export function hubConnection(url?: string, options?: Options): Connection;
 
@@ -13,8 +13,8 @@ export interface Connection {
   id: string;
   proxies: { [hubName: string]: any };
   transport: {
-    name: string,
-    supportsKeepAlive: SupportsKeepAliveHandler
+    name: string;
+    supportsKeepAlive: SupportsKeepAliveHandler;
   };
 
   /**

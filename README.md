@@ -17,7 +17,11 @@ This package is not meant to be used with ASP.NET Core version of SignalR
 
 ### Usage
 
-npm i -D signalr-webworker
+Install the [npm package](https://www.npmjs.com/package/signalr-webworker) using the command below:
+
+```
+npm i --save-dev signalr-webworker
+```
 
 #### ES6 Loader
 

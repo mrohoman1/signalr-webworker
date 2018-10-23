@@ -2,5 +2,5 @@
 
 declare module "signalr-webworker" {
   export const signalR: SignalR;
-  export const hubConnection: SignalR.Hub.Connection;
+  export const hubConnection: SignalR.Hub.HubCreator;
 }

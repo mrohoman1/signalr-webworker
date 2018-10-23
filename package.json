@@ -14,7 +14,7 @@
     "dist"
   ],
   "main": "dist/signalR.js",
-  "types": "./index.d.ts",
+  "types": "dist/index.d.ts",
   "readme": "README.md",
   "repository": {
     "type": "git",

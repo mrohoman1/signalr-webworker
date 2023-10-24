@@ -1,15 +1,15 @@
 {
-  "name": "signalr-webworker",
+  "name": "signalr-webworker-no-jquery",
   "version": "1.0.13",
   "author": {
-    "name": "Trutoo",
-    "url": "https://github.com/trutoo"
+    "name": "Mouhsine Rohoman",
+    "url": "https://github.com/mrohoman1"
   },
   "description": "Javascript SignalR client without jQuery dependency and window refernces that works in webworkers",
   "keywords": [
     "signalr"
   ],
-  "homepage": "https://github.com/trutoo/signalr-webworker",
+  "homepage": "https://github.com/mrohoman1/signalr-webworker",
   "files": [
     "dist"
   ],
@@ -18,10 +18,10 @@
   "readme": "README.md",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/trutoo/signalr-webworker.git"
+    "url": "git+https://github.com/mrohoman1/signalr-webworker.git"
   },
   "bugs": {
-    "url": "https://github.com/trutoo/signalr-webworker/issues"
+    "url": "https://github.com/mrohoman1/signalr-webworker/issues"
   },
   "license": "Apache-2.0",
   "licenses": [

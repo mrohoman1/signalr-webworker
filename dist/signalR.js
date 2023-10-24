@@ -397,11 +397,12 @@ var jQueryShim = require("./jQueryShim");
         return deferred.promise();
       }
 
-      configureStopReconnectingTimeout(connection); // Resolve the full url
-
+      configureStopReconnectingTimeout(connection);
       connection.protocol = (connection.url.match(/([a-z]+:)\/\//) || [])[1];
-      connection.host = (connection.url.match(/^[a-z]+:\/\/([^\/:]+)/) || [])[1];
+      var port = (connection.url.match(/:\d+/) || [])[0];
+      connection.host = (connection.url.match(/^[a-z]+:\/\/([^\/:]+)/) || [])[1] + port;
       connection.baseUrl = connection.protocol + "//" + connection.host; // Set the websocket protocol
+      // Set the websocket protocol
 
       connection.wsProtocol = connection.protocol === "https:" ? "wss://" : "ws://"; // If jsonp with no/auto transport is specified, then set the transport to long polling
       // since that is the only transport for which jsonp really makes sense.

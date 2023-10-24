@@ -13,7 +13,7 @@ const jQueryShim = require("./jQueryShim");
  * Modified by Erik Hughes
  */
 
-(function($, undefined) {
+(function ($, undefined) {
   var resources = {
     nojQuery:
       "jQuery was not found. Please ensure jQuery is referenced before the SignalR client JavaScript file.",
@@ -83,7 +83,7 @@ const jQueryShim = require("./jQueryShim");
       global: false,
       cache: false
     },
-    log = function(msg, logging) {
+    log = function (msg, logging) {
       if (logging === false) {
         return;
       }
@@ -98,7 +98,7 @@ const jQueryShim = require("./jQueryShim");
         console.log(m);
       }
     },
-    changeState = function(connection, expectedState, newState) {
+    changeState = function (connection, expectedState, newState) {
       if (expectedState === connection.state) {
         connection.state = newState;
 
@@ -110,22 +110,22 @@ const jQueryShim = require("./jQueryShim");
 
       return false;
     },
-    isDisconnecting = function(connection) {
+    isDisconnecting = function (connection) {
       return connection.state === signalR.connectionState.disconnected;
     },
-    supportsKeepAlive = function(connection) {
+    supportsKeepAlive = function (connection) {
       return (
         connection._.keepAliveData.activated &&
         connection.transport.supportsKeepAlive(connection)
       );
     },
-    configureStopReconnectingTimeout = function(connection) {
+    configureStopReconnectingTimeout = function (connection) {
       var stopReconnectingTimeout, onReconnectTimeout;
 
       // Check if this connection has already been configured to stop reconnecting after a specified timeout.
       // Without this check if a connection is stopped then started events will be bound multiple times.
       if (!connection._.configuredStopReconnectingTimeout) {
-        onReconnectTimeout = function(connection) {
+        onReconnectTimeout = function (connection) {
           var message = signalR._.format(
             signalR.resources.reconnectTimeout,
             connection.disconnectTimeout
@@ -137,18 +137,18 @@ const jQueryShim = require("./jQueryShim");
           connection.stop(/* async */ false, /* notifyServer */ false);
         };
 
-        connection.reconnecting(function() {
+        connection.reconnecting(function () {
           var connection = this;
 
           // Guard against state changing in a previous user defined even handler
           if (connection.state === signalR.connectionState.reconnecting) {
-            stopReconnectingTimeout = setTimeout(function() {
+            stopReconnectingTimeout = setTimeout(function () {
               onReconnectTimeout(connection);
             }, connection.disconnectTimeout);
           }
         });
 
-        connection.stateChanged(function(data) {
+        connection.stateChanged(function (data) {
           if (data.oldState === signalR.connectionState.reconnecting) {
             // Clear the pending reconnect timeout check
             clearTimeout(stopReconnectingTimeout);
@@ -159,7 +159,7 @@ const jQueryShim = require("./jQueryShim");
       }
     };
 
-  signalR = function(url, qs, logging) {
+  signalR = function (url, qs, logging) {
     /// <summary>Creates a new SignalR connection for the given url</summary>
     /// <param name="url" type="String">The URL of the long polling endpoint</param>
     /// <param name="qs" type="Object">
@@ -178,7 +178,7 @@ const jQueryShim = require("./jQueryShim");
   signalR._ = {
     defaultContentType: "application/x-www-form-urlencoded; charset=UTF-8",
 
-    error: function(message, source, context) {
+    error: function (message, source, context) {
       var e = new Error(message);
       e.source = source;
 
@@ -189,13 +189,13 @@ const jQueryShim = require("./jQueryShim");
       return e;
     },
 
-    transportError: function(message, transport, source, context) {
+    transportError: function (message, transport, source, context) {
       var e = this.error(message, source, context);
       e.transport = transport ? transport.name : undefined;
       return e;
     },
 
-    format: function() {
+    format: function () {
       /// <summary>Usage: format("Hi {0}, you are {1}!", "Foo", 100) </summary>
       var s = arguments[0];
       for (var i = 0; i < arguments.length - 1; i++) {
@@ -204,14 +204,14 @@ const jQueryShim = require("./jQueryShim");
       return s;
     },
 
-    configurePingInterval: function(connection) {
+    configurePingInterval: function (connection) {
       var config = connection._.config,
-        onFail = function(error) {
+        onFail = function (error) {
           $(connection).triggerHandler(events.onError, [error]);
         };
 
       if (config && !connection._.pingIntervalId && config.pingInterval) {
-        connection._.pingIntervalId = setInterval(function() {
+        connection._.pingIntervalId = setInterval(function () {
           signalR.transports._logic.pingServer(connection).fail(onFail);
         }, config.pingInterval);
       }
@@ -236,7 +236,7 @@ const jQueryShim = require("./jQueryShim");
   };
 
   signalR.hub = {
-    start: function() {
+    start: function () {
       // This will get replaced with the real hub connection start method when hubs is referenced correctly
       throw new Error(
         "SignalR: Error loading hubs. Ensure your hubs reference is correct, e.g. <script src='/signalr/js'></script>."
@@ -257,8 +257,8 @@ const jQueryShim = require("./jQueryShim");
         if ($.type(transport) !== "string" || !signalR.transports[transport]) {
           connection.log(
             "Invalid transport: " +
-              transport +
-              ", removing it from the transports list."
+            transport +
+            ", removing it from the transports list."
           );
           requestedTransport.splice(i, 1);
         }
@@ -306,7 +306,7 @@ const jQueryShim = require("./jQueryShim");
     var that = this,
       buffer = [];
 
-    that.tryBuffer = function(message) {
+    that.tryBuffer = function (message) {
       if (connection.state === $.signalR.connectionState.connecting) {
         buffer.push(message);
 
@@ -316,7 +316,7 @@ const jQueryShim = require("./jQueryShim");
       return false;
     };
 
-    that.drain = function() {
+    that.drain = function () {
       // Ensure that the connection is connected when we drain (do not want to drain while a connection is not active)
       if (connection.state === $.signalR.connectionState.connected) {
         while (buffer.length > 0) {
@@ -325,13 +325,13 @@ const jQueryShim = require("./jQueryShim");
       }
     };
 
-    that.clear = function() {
+    that.clear = function () {
       buffer = [];
     };
   }
 
   signalR.fn = signalR.prototype = {
-    init: function(url, qs, logging) {
+    init: function (url, qs, logging) {
       var $connection = $(this);
 
       this.url = url;
@@ -339,7 +339,7 @@ const jQueryShim = require("./jQueryShim");
       this.lastError = null;
       this._ = {
         keepAliveData: {},
-        connectingMessageBuffer: new ConnectingMessageBuffer(this, function(
+        connectingMessageBuffer: new ConnectingMessageBuffer(this, function (
           message
         ) {
           $connection.triggerHandler(events.onReceived, [message]);
@@ -355,7 +355,7 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    _parseResponse: function(response) {
+    _parseResponse: function (response) {
       var that = this;
 
       if (!response) {
@@ -391,7 +391,7 @@ const jQueryShim = require("./jQueryShim");
 
     keepAliveWarnAt: 2 / 3, // Warn user of slow connection if we breach the X% mark of the keep alive timeout
 
-    start: function(options, callback) {
+    start: function (options, callback) {
       /// <summary>Starts the connection</summary>
       /// <param name="options" type="Object">Options map</param>
       /// <param name="callback" type="Function">A callback function to execute when the connection has started</param>
@@ -458,12 +458,10 @@ const jQueryShim = require("./jQueryShim");
 
       configureStopReconnectingTimeout(connection);
 
-      // Resolve the full url
       connection.protocol = (connection.url.match(/([a-z]+:)\/\//) || [])[1];
-      connection.host = (connection.url.match(/^[a-z]+:\/\/([^\/:]+)/) ||
-        [])[1];
-
-      connection.baseUrl = connection.protocol + "//" + connection.host;
+      let port = (connection.url.match(/:\d+/) || [])[0]
+      connection.host = (connection.url.match(/^[a-z]+:\/\/([^\/:]+)/) || [])[1] + port;
+      connection.baseUrl = connection.protocol + "//" + connection.host; // Set the websocket protocol
 
       // Set the websocket protocol
       connection.wsProtocol =
@@ -481,7 +479,7 @@ const jQueryShim = require("./jQueryShim");
 
       connection.ajaxDataType = config.jsonp ? "jsonp" : "text";
 
-      $(connection).bind(events.onStart, function(e, data) {
+      $(connection).bind(events.onStart, function (e, data) {
         if ($.type(callback) === "function") {
           callback.call(connection);
         }
@@ -492,7 +490,7 @@ const jQueryShim = require("./jQueryShim");
         connection
       );
 
-      initialize = function(transports, index) {
+      initialize = function (transports, index) {
         var noTransportError = signalR._.error(resources.noTransportOnInit);
 
         index = index || 0;
@@ -522,7 +520,7 @@ const jQueryShim = require("./jQueryShim");
 
         var transportName = transports[index],
           transport = signalR.transports[transportName],
-          onFallback = function() {
+          onFallback = function () {
             initialize(transports, index + 1);
           };
 
@@ -531,7 +529,7 @@ const jQueryShim = require("./jQueryShim");
         try {
           connection._.initHandler.start(
             transport,
-            function() {
+            function () {
               // success
               connection.log(
                 "The start request succeeded. Transitioning to the connected state."
@@ -569,16 +567,16 @@ const jQueryShim = require("./jQueryShim");
         } catch (error) {
           connection.log(
             transport.name +
-              " transport threw '" +
-              error.message +
-              "' when attempting to start."
+            " transport threw '" +
+            error.message +
+            "' when attempting to start."
           );
           onFallback();
         }
       };
 
       var url = connection.url + "/negotiate",
-        onFailed = function(error, connection) {
+        onFailed = function (error, connection) {
           var err = signalR._.error(
             resources.errorOnNegotiate,
             error,
@@ -602,7 +600,7 @@ const jQueryShim = require("./jQueryShim");
         connection,
         {
           url: url,
-          error: function(error, statusText) {
+          error: function (error, statusText) {
             // We don't want to cause any errors if we're aborting our own negotiate request.
             if (statusText !== _negotiateAbortText) {
               onFailed(error, connection);
@@ -617,7 +615,7 @@ const jQueryShim = require("./jQueryShim");
               );
             }
           },
-          success: function(result) {
+          success: function (result) {
             var res,
               keepAliveData,
               protocolError,
@@ -691,7 +689,7 @@ const jQueryShim = require("./jQueryShim");
               return;
             }
 
-            $.each(signalR.transports, function(key) {
+            $.each(signalR.transports, function (key) {
               if (
                 key.indexOf("_") === 0 ||
                 (key === "webSockets" && !res.TryWebSockets)
@@ -702,7 +700,7 @@ const jQueryShim = require("./jQueryShim");
             });
 
             if ($.isArray(config.transport)) {
-              $.each(config.transport, function(_, transport) {
+              $.each(config.transport, function (_, transport) {
                 if ($.inArray(supportedTransports, transport)) {
                   transports.push(transport);
                 }
@@ -721,18 +719,18 @@ const jQueryShim = require("./jQueryShim");
       return deferred.promise();
     },
 
-    starting: function(callback) {
+    starting: function (callback) {
       /// <summary>Adds a callback that will be invoked before anything is sent over the connection</summary>
       /// <param name="callback" type="Function">A callback function to execute before the connection is fully instantiated.</param>
       /// <returns type="signalR" />
       var connection = this;
-      $(connection).bind(events.onStarting, function(e, data) {
+      $(connection).bind(events.onStarting, function (e, data) {
         callback.call(connection);
       });
       return connection;
     },
 
-    send: function(data) {
+    send: function (data) {
       /// <summary>Sends data over the connection</summary>
       /// <param name="data" type="String">The data to send over the connection</param>
       /// <returns type="signalR" />
@@ -757,34 +755,34 @@ const jQueryShim = require("./jQueryShim");
       return connection;
     },
 
-    received: function(callback) {
+    received: function (callback) {
       /// <summary>Adds a callback that will be invoked after anything is received over the connection</summary>
       /// <param name="callback" type="Function">A callback function to execute when any data is received on the connection</param>
       /// <returns type="signalR" />
       var connection = this;
-      $(connection).bind(events.onReceived, function(e, data) {
+      $(connection).bind(events.onReceived, function (e, data) {
         callback.call(connection, data);
       });
       return connection;
     },
 
-    stateChanged: function(callback) {
+    stateChanged: function (callback) {
       /// <summary>Adds a callback that will be invoked when the connection state changes</summary>
       /// <param name="callback" type="Function">A callback function to execute when the connection state changes</param>
       /// <returns type="signalR" />
       var connection = this;
-      $(connection).bind(events.onStateChanged, function(e, data) {
+      $(connection).bind(events.onStateChanged, function (e, data) {
         callback.call(connection, data);
       });
       return connection;
     },
 
-    error: function(callback) {
+    error: function (callback) {
       /// <summary>Adds a callback that will be invoked after an error occurs with the connection</summary>
       /// <param name="callback" type="Function">A callback function to execute when an error occurs on the connection</param>
       /// <returns type="signalR" />
       var connection = this;
-      $(connection).bind(events.onError, function(e, errorData, sendData) {
+      $(connection).bind(events.onError, function (e, errorData, sendData) {
         connection.lastError = errorData;
         // In practice 'errorData' is the SignalR built error object.
         // In practice 'sendData' is undefined for all error events except those triggered by
@@ -794,52 +792,52 @@ const jQueryShim = require("./jQueryShim");
       return connection;
     },
 
-    disconnected: function(callback) {
+    disconnected: function (callback) {
       /// <summary>Adds a callback that will be invoked when the client disconnects</summary>
       /// <param name="callback" type="Function">A callback function to execute when the connection is broken</param>
       /// <returns type="signalR" />
       var connection = this;
-      $(connection).bind(events.onDisconnect, function(e, data) {
+      $(connection).bind(events.onDisconnect, function (e, data) {
         callback.call(connection);
       });
       return connection;
     },
 
-    connectionSlow: function(callback) {
+    connectionSlow: function (callback) {
       /// <summary>Adds a callback that will be invoked when the client detects a slow connection</summary>
       /// <param name="callback" type="Function">A callback function to execute when the connection is slow</param>
       /// <returns type="signalR" />
       var connection = this;
-      $(connection).bind(events.onConnectionSlow, function(e, data) {
+      $(connection).bind(events.onConnectionSlow, function (e, data) {
         callback.call(connection);
       });
 
       return connection;
     },
 
-    reconnecting: function(callback) {
+    reconnecting: function (callback) {
       /// <summary>Adds a callback that will be invoked when the underlying transport begins reconnecting</summary>
       /// <param name="callback" type="Function">A callback function to execute when the connection enters a reconnecting state</param>
       /// <returns type="signalR" />
       var connection = this;
-      $(connection).bind(events.onReconnecting, function(e, data) {
+      $(connection).bind(events.onReconnecting, function (e, data) {
         callback.call(connection);
       });
       return connection;
     },
 
-    reconnected: function(callback) {
+    reconnected: function (callback) {
       /// <summary>Adds a callback that will be invoked when the underlying transport reconnects</summary>
       /// <param name="callback" type="Function">A callback function to execute when the connection is restored</param>
       /// <returns type="signalR" />
       var connection = this;
-      $(connection).bind(events.onReconnect, function(e, data) {
+      $(connection).bind(events.onReconnect, function (e, data) {
         callback.call(connection);
       });
       return connection;
     },
 
-    stop: function(async, notifyServer) {
+    stop: function (async, notifyServer) {
       /// <summary>Stops listening</summary>
       /// <param name="async" type="Boolean">Whether or not to asynchronously abort the connection</param>
       /// <param name="notifyServer" type="Boolean">Whether we want to notify the server that we are aborting the connection</param>
@@ -908,14 +906,14 @@ const jQueryShim = require("./jQueryShim");
       return connection;
     },
 
-    log: function(msg) {
+    log: function (msg) {
       log(msg, this.logging);
     }
   };
 
   signalR.fn.init.prototype = signalR.fn;
 
-  signalR.noConflict = function() {
+  signalR.noConflict = function () {
     /// <summary>Reinstates the original value of $.connection and returns the signalR object for manual assignment</summary>
     /// <returns type="signalR" />
     if ($.connection === signalR) {
@@ -936,7 +934,7 @@ const jQueryShim = require("./jQueryShim");
 
 /// <reference path="jquery.signalR.core.js" />
 
-(function($, undefined) {
+(function ($, undefined) {
   var signalR = $.signalR,
     events = $.signalR.events,
     changeState = $.signalR.changeState,
@@ -952,7 +950,7 @@ const jQueryShim = require("./jQueryShim");
 
     // Ensure that we successfully marked active before continuing the heartbeat.
     if (transportLogic.markActive(connection)) {
-      connection._.beatHandle = setTimeout(function() {
+      connection._.beatHandle = setTimeout(function () {
         beat(connection);
       }, connection._.beatInterval);
     }
@@ -1008,7 +1006,7 @@ const jQueryShim = require("./jQueryShim");
   }
 
   InitHandler.prototype = {
-    start: function(transport, onSuccess, onFallback) {
+    start: function (transport, onSuccess, onFallback) {
       var that = this,
         connection = that.connection,
         failCalled = false;
@@ -1016,8 +1014,8 @@ const jQueryShim = require("./jQueryShim");
       if (that.startRequested || that.connectionStopped) {
         connection.log(
           "WARNING! " +
-            transport.name +
-            " transport cannot be started. Initialization ongoing or completed."
+          transport.name +
+          " transport cannot be started. Initialization ongoing or completed."
         );
         return;
       }
@@ -1026,12 +1024,12 @@ const jQueryShim = require("./jQueryShim");
 
       transport.start(
         connection,
-        function() {
+        function () {
           if (!failCalled) {
             that.initReceived(transport, onSuccess);
           }
         },
-        function(error) {
+        function (error) {
           // Don't allow the same transport to cause onFallback to be called twice
           if (!failCalled) {
             failCalled = true;
@@ -1044,7 +1042,7 @@ const jQueryShim = require("./jQueryShim");
         }
       );
 
-      that.transportTimeoutHandle = setTimeout(function() {
+      that.transportTimeoutHandle = setTimeout(function () {
         if (!failCalled) {
           failCalled = true;
           connection.log(
@@ -1055,13 +1053,13 @@ const jQueryShim = require("./jQueryShim");
       }, connection._.totalTransportConnectTimeout);
     },
 
-    stop: function() {
+    stop: function () {
       this.connectionStopped = true;
       clearTimeout(this.transportTimeoutHandle);
       signalR.transports._logic.tryAbortStartRequest(this.connection);
     },
 
-    initReceived: function(transport, onSuccess) {
+    initReceived: function (transport, onSuccess) {
       var that = this,
         connection = that.connection;
 
@@ -1080,13 +1078,13 @@ const jQueryShim = require("./jQueryShim");
       connection.log(
         transport.name + " transport connected. Initiating start request."
       );
-      signalR.transports._logic.ajaxStart(connection, function() {
+      signalR.transports._logic.ajaxStart(connection, function () {
         that.startCompleted = true;
         onSuccess();
       });
     },
 
-    transportFailed: function(transport, error, onFallback) {
+    transportFailed: function (transport, error, onFallback) {
       var connection = this.connection,
         deferred = connection._deferral,
         wrappedError;
@@ -1102,7 +1100,7 @@ const jQueryShim = require("./jQueryShim");
 
         connection.log(
           transport.name +
-            " transport failed to connect. Attempting to fall back."
+          " transport failed to connect. Attempting to fall back."
         );
         onFallback();
       } else if (!this.startCompleted) {
@@ -1115,7 +1113,7 @@ const jQueryShim = require("./jQueryShim");
 
         connection.log(
           transport.name +
-            " transport failed during the start request. Stopping the connection."
+          " transport failed during the start request. Stopping the connection."
         );
         $(connection).triggerHandler(events.onError, [wrappedError]);
         if (deferred) {
@@ -1131,7 +1129,7 @@ const jQueryShim = require("./jQueryShim");
   };
 
   transportLogic = signalR.transports._logic = {
-    ajax: function(connection, options) {
+    ajax: function (connection, options) {
       return $.ajax(
         $.extend(
           /*deep copy*/ true,
@@ -1150,7 +1148,7 @@ const jQueryShim = require("./jQueryShim");
       );
     },
 
-    pingServer: function(connection) {
+    pingServer: function (connection) {
       /// <summary>Pings the server</summary>
       /// <param name="connection" type="signalr">Connection associated with the server ping</param>
       /// <returns type="signalR" />
@@ -1165,7 +1163,7 @@ const jQueryShim = require("./jQueryShim");
 
         xhr = transportLogic.ajax(connection, {
           url: url,
-          success: function(result) {
+          success: function (result) {
             var data;
 
             try {
@@ -1199,7 +1197,7 @@ const jQueryShim = require("./jQueryShim");
               );
             }
           },
-          error: function(error) {
+          error: function (error) {
             if (error.status === 401 || error.status === 403) {
               deferral.reject(
                 signalR._.transportError(
@@ -1237,7 +1235,7 @@ const jQueryShim = require("./jQueryShim");
       return deferral.promise();
     },
 
-    prepareQueryString: function(connection, url) {
+    prepareQueryString: function (connection, url) {
       var preparedUrl;
 
       // Use addQs to start since it handles the ?/& prefix for us
@@ -1261,7 +1259,7 @@ const jQueryShim = require("./jQueryShim");
       return preparedUrl;
     },
 
-    addQs: function(url, qs) {
+    addQs: function (url, qs) {
       var appender = url.indexOf("?") !== -1 ? "&" : "?",
         firstChar;
 
@@ -1289,7 +1287,7 @@ const jQueryShim = require("./jQueryShim");
     },
 
     // BUG #2953: The url needs to be same otherwise it will cause a memory leak
-    getUrl: function(connection, transport, reconnecting, poll, ajaxPost) {
+    getUrl: function (connection, transport, reconnecting, poll, ajaxPost) {
       /// <summary>Gets the url for making a GET based connect request</summary>
       var baseUrl = transport === "webSockets" ? "" : connection.baseUrl,
         url = baseUrl + connection.appRelativeUrl,
@@ -1323,7 +1321,7 @@ const jQueryShim = require("./jQueryShim");
       return url;
     },
 
-    maximizePersistentResponse: function(minPersistentResponse) {
+    maximizePersistentResponse: function (minPersistentResponse) {
       return {
         MessageId: minPersistentResponse.C,
         Messages: minPersistentResponse.M,
@@ -1336,13 +1334,13 @@ const jQueryShim = require("./jQueryShim");
       };
     },
 
-    updateGroups: function(connection, groupsToken) {
+    updateGroups: function (connection, groupsToken) {
       if (groupsToken) {
         connection.groupsToken = groupsToken;
       }
     },
 
-    stringifySend: function(connection, message) {
+    stringifySend: function (connection, message) {
       if (
         typeof message === "string" ||
         typeof message === "undefined" ||
@@ -1353,11 +1351,11 @@ const jQueryShim = require("./jQueryShim");
       return connection.json.stringify(message);
     },
 
-    ajaxSend: function(connection, data) {
+    ajaxSend: function (connection, data) {
       var payload = transportLogic.stringifySend(connection, data),
         url = getAjaxUrl(connection, "/send"),
         xhr,
-        onFail = function(error, connection) {
+        onFail = function (error, connection) {
           $(connection).triggerHandler(events.onError, [
             signalR._.transportError(
               signalR.resources.sendFailed,
@@ -1376,7 +1374,7 @@ const jQueryShim = require("./jQueryShim");
         data: {
           data: payload
         },
-        success: function(result) {
+        success: function (result) {
           var res;
 
           if (result) {
@@ -1391,7 +1389,7 @@ const jQueryShim = require("./jQueryShim");
             transportLogic.triggerReceived(connection, res);
           }
         },
-        error: function(error, textStatus) {
+        error: function (error, textStatus) {
           if (textStatus === "abort" || textStatus === "parsererror") {
             // The parsererror happens for sends that don't return any data, and hence
             // don't write the jsonp callback to the response. This is harder to fix on the server
@@ -1406,7 +1404,7 @@ const jQueryShim = require("./jQueryShim");
       return xhr;
     },
 
-    ajaxAbort: function(connection, async) {
+    ajaxAbort: function (connection, async) {
       if (typeof connection.transport === "undefined") {
         return;
       }
@@ -1426,14 +1424,14 @@ const jQueryShim = require("./jQueryShim");
       connection.log("Fired ajax abort async = " + async + ".");
     },
 
-    ajaxStart: function(connection, onSuccess) {
-      var rejectDeferred = function(error) {
-          var deferred = connection._deferral;
-          if (deferred) {
-            deferred.reject(error);
-          }
-        },
-        triggerStartError = function(error) {
+    ajaxStart: function (connection, onSuccess) {
+      var rejectDeferred = function (error) {
+        var deferred = connection._deferral;
+        if (deferred) {
+          deferred.reject(error);
+        }
+      },
+        triggerStartError = function (error) {
           connection.log("The start request failed. Stopping the connection.");
           $(connection).triggerHandler(events.onError, [error]);
           rejectDeferred(error);
@@ -1442,7 +1440,7 @@ const jQueryShim = require("./jQueryShim");
 
       connection._.startRequest = transportLogic.ajax(connection, {
         url: getAjaxUrl(connection, "/start"),
-        success: function(result, statusText, xhr) {
+        success: function (result, statusText, xhr) {
           var data;
 
           try {
@@ -1476,7 +1474,7 @@ const jQueryShim = require("./jQueryShim");
             );
           }
         },
-        error: function(xhr, statusText, error) {
+        error: function (xhr, statusText, error) {
           if (statusText !== startAbortText) {
             triggerStartError(
               signalR._.error(
@@ -1503,7 +1501,7 @@ const jQueryShim = require("./jQueryShim");
       });
     },
 
-    tryAbortStartRequest: function(connection) {
+    tryAbortStartRequest: function (connection) {
       if (connection._.startRequest) {
         // If the start request has already completed this will noop.
         connection._.startRequest.abort(startAbortText);
@@ -1511,7 +1509,7 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    tryInitialize: function(connection, persistentResponse, onInitialized) {
+    tryInitialize: function (connection, persistentResponse, onInitialized) {
       if (persistentResponse.Initialized && onInitialized) {
         onInitialized();
       } else if (persistentResponse.Initialized) {
@@ -1521,13 +1519,13 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    triggerReceived: function(connection, data) {
+    triggerReceived: function (connection, data) {
       if (!connection._.connectingMessageBuffer.tryBuffer(data)) {
         $(connection).triggerHandler(events.onReceived, [data]);
       }
     },
 
-    processMessages: function(connection, minData, onInitialized) {
+    processMessages: function (connection, minData, onInitialized) {
       var data;
 
       // Update the last message time stamp
@@ -1543,7 +1541,7 @@ const jQueryShim = require("./jQueryShim");
         }
 
         if (data.Messages) {
-          $.each(data.Messages, function(index, message) {
+          $.each(data.Messages, function (index, message) {
             transportLogic.triggerReceived(connection, message);
           });
 
@@ -1552,7 +1550,7 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    monitorKeepAlive: function(connection) {
+    monitorKeepAlive: function (connection) {
       var keepAliveData = connection._.keepAliveData;
 
       // If we haven't initiated the keep alive timeouts then we need to
@@ -1562,7 +1560,7 @@ const jQueryShim = require("./jQueryShim");
         transportLogic.markLastMessage(connection);
 
         // Save the function so we can unbind it on stop
-        connection._.keepAliveData.reconnectKeepAliveUpdate = function() {
+        connection._.keepAliveData.reconnectKeepAliveUpdate = function () {
           // Mark a new message so that keep alive doesn't time out connections
           transportLogic.markLastMessage(connection);
         };
@@ -1575,11 +1573,11 @@ const jQueryShim = require("./jQueryShim");
 
         connection.log(
           "Now monitoring keep alive with a warning timeout of " +
-            keepAliveData.timeoutWarning +
-            ", keep alive timeout of " +
-            keepAliveData.timeout +
-            " and disconnecting timeout of " +
-            connection.disconnectTimeout
+          keepAliveData.timeoutWarning +
+          ", keep alive timeout of " +
+          keepAliveData.timeout +
+          " and disconnecting timeout of " +
+          connection.disconnectTimeout
         );
       } else {
         connection.log(
@@ -1588,7 +1586,7 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    stopMonitoringKeepAlive: function(connection) {
+    stopMonitoringKeepAlive: function (connection) {
       var keepAliveData = connection._.keepAliveData;
 
       // Only attempt to stop the keep alive monitoring if its being monitored
@@ -1608,16 +1606,16 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    startHeartbeat: function(connection) {
+    startHeartbeat: function (connection) {
       connection._.lastActiveAt = new Date().getTime();
       beat(connection);
     },
 
-    markLastMessage: function(connection) {
+    markLastMessage: function (connection) {
       connection._.lastMessageAt = new Date().getTime();
     },
 
-    markActive: function(connection) {
+    markActive: function (connection) {
       if (transportLogic.verifyLastActive(connection)) {
         connection._.lastActiveAt = new Date().getTime();
         return true;
@@ -1626,14 +1624,14 @@ const jQueryShim = require("./jQueryShim");
       return false;
     },
 
-    isConnectedOrReconnecting: function(connection) {
+    isConnectedOrReconnecting: function (connection) {
       return (
         connection.state === signalR.connectionState.connected ||
         connection.state === signalR.connectionState.reconnecting
       );
     },
 
-    ensureReconnectingState: function(connection) {
+    ensureReconnectingState: function (connection) {
       if (
         changeState(
           connection,
@@ -1646,14 +1644,14 @@ const jQueryShim = require("./jQueryShim");
       return connection.state === signalR.connectionState.reconnecting;
     },
 
-    clearReconnectTimeout: function(connection) {
+    clearReconnectTimeout: function (connection) {
       if (connection && connection._.reconnectTimeout) {
         clearTimeout(connection._.reconnectTimeout);
         delete connection._.reconnectTimeout;
       }
     },
 
-    verifyLastActive: function(connection) {
+    verifyLastActive: function (connection) {
       if (
         new Date().getTime() - connection._.lastActiveAt >=
         connection.reconnectWindow
@@ -1674,7 +1672,7 @@ const jQueryShim = require("./jQueryShim");
       return true;
     },
 
-    reconnect: function(connection, transportName) {
+    reconnect: function (connection, transportName) {
       var transport = signalR.transports[transportName];
 
       // We should only set a reconnectTimeout if we are currently connected
@@ -1688,7 +1686,7 @@ const jQueryShim = require("./jQueryShim");
           return;
         }
 
-        connection._.reconnectTimeout = setTimeout(function() {
+        connection._.reconnectTimeout = setTimeout(function () {
           if (!transportLogic.verifyLastActive(connection)) {
             return;
           }
@@ -1703,7 +1701,7 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    handleParseFailure: function(connection, result, error, onFailed, context) {
+    handleParseFailure: function (connection, result, error, onFailed, context) {
       var wrappedError = signalR._.transportError(
         signalR._.format(signalR.resources.parseFailed, result),
         connection.transport,
@@ -1722,7 +1720,7 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    initHandler: function(connection) {
+    initHandler: function (connection) {
       return new InitHandler(connection);
     }
   };
@@ -1733,7 +1731,7 @@ const jQueryShim = require("./jQueryShim");
 
 /// <reference path="jquery.signalR.transports.common.js" />
 
-(function($, undefined) {
+(function ($, undefined) {
   var signalR = $.signalR,
     events = $.signalR.events,
     changeState = $.signalR.changeState,
@@ -1742,11 +1740,11 @@ const jQueryShim = require("./jQueryShim");
   signalR.transports.webSockets = {
     name: "webSockets",
 
-    supportsKeepAlive: function() {
+    supportsKeepAlive: function () {
       return true;
     },
 
-    send: function(connection, data) {
+    send: function (connection, data) {
       var payload = transportLogic.stringifySend(connection, data);
 
       try {
@@ -1764,7 +1762,7 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    start: function(connection, onSuccess, onFailed) {
+    start: function (connection, onSuccess, onFailed) {
       var url,
         opened = false,
         that = this,
@@ -1788,7 +1786,7 @@ const jQueryShim = require("./jQueryShim");
         connection.log("Connecting to websocket endpoint '" + url + "'.");
         connection.socket = new WebSocket(url);
 
-        connection.socket.onopen = function() {
+        connection.socket.onopen = function () {
           opened = true;
           connection.log("Websocket opened.");
 
@@ -1805,7 +1803,7 @@ const jQueryShim = require("./jQueryShim");
           }
         };
 
-        connection.socket.onclose = function(event) {
+        connection.socket.onclose = function (event) {
           var error;
 
           // Only handle a socket close if the close is from the current socket.
@@ -1828,7 +1826,7 @@ const jQueryShim = require("./jQueryShim");
 
               connection.log(
                 "Unclean disconnect from websocket: " +
-                  (event.reason || "[no reason given].")
+                (event.reason || "[no reason given].")
               );
             } else {
               connection.log("Websocket closed.");
@@ -1844,7 +1842,7 @@ const jQueryShim = require("./jQueryShim");
           }
         };
 
-        connection.socket.onmessage = function(event) {
+        connection.socket.onmessage = function (event) {
           var data;
 
           try {
@@ -1874,15 +1872,15 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    reconnect: function(connection) {
+    reconnect: function (connection) {
       transportLogic.reconnect(connection, this.name);
     },
 
-    lostConnection: function(connection) {
+    lostConnection: function (connection) {
       this.reconnect(connection);
     },
 
-    stop: function(connection) {
+    stop: function (connection) {
       // Don't trigger a reconnect after stopping
       transportLogic.clearReconnectTimeout(connection);
 
@@ -1893,7 +1891,7 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    abort: function(connection, async) {
+    abort: function (connection, async) {
       transportLogic.ajaxAbort(connection, async);
     }
   };
@@ -1904,7 +1902,7 @@ const jQueryShim = require("./jQueryShim");
 
 /// <reference path="jquery.signalR.transports.common.js" />
 
-(function($, undefined) {
+(function ($, undefined) {
   var signalR = $.signalR,
     events = $.signalR.events,
     changeState = $.signalR.changeState,
@@ -1914,17 +1912,17 @@ const jQueryShim = require("./jQueryShim");
   signalR.transports.longPolling = {
     name: "longPolling",
 
-    supportsKeepAlive: function() {
+    supportsKeepAlive: function () {
       return false;
     },
 
     reconnectDelay: 3000,
 
-    start: function(connection, onSuccess, onFailed) {
+    start: function (connection, onSuccess, onFailed) {
       /// <summary>Starts the long polling connection</summary>
       /// <param name="connection" type="signalR">The SignalR connection to start</param>
       var that = this,
-        fireConnect = function() {
+        fireConnect = function () {
           fireConnect = $.noop;
 
           connection.log("LongPolling connected.");
@@ -1937,7 +1935,7 @@ const jQueryShim = require("./jQueryShim");
             );
           }
         },
-        tryFailConnect = function(error) {
+        tryFailConnect = function (error) {
           if (onFailed(error)) {
             connection.log("LongPolling failed to connect.");
             return true;
@@ -1947,7 +1945,7 @@ const jQueryShim = require("./jQueryShim");
         },
         privateData = connection._,
         reconnectErrors = 0,
-        fireReconnected = function(instance) {
+        fireReconnected = function (instance) {
           clearTimeout(privateData.reconnectTimeoutId);
           privateData.reconnectTimeoutId = null;
 
@@ -1975,7 +1973,7 @@ const jQueryShim = require("./jQueryShim");
 
       privateData.reconnectTimeoutId = null;
 
-      privateData.pollTimeoutId = setTimeout(function() {
+      privateData.pollTimeoutId = setTimeout(function () {
         (function poll(instance, raiseReconnect) {
           var messageId = instance.messageId,
             connect = messageId === null,
@@ -2006,7 +2004,7 @@ const jQueryShim = require("./jQueryShim");
           connection.log("Opening long polling request to '" + url + "'.");
           instance.pollXhr = transportLogic.ajax(connection, {
             xhrFields: {
-              onprogress: function() {
+              onprogress: function () {
                 transportLogic.markLastMessage(connection);
               }
             },
@@ -2015,7 +2013,7 @@ const jQueryShim = require("./jQueryShim");
             contentType: signalR._.defaultContentType,
             data: postData,
             timeout: connection._.pollTimeout,
-            success: function(result) {
+            success: function (result) {
               var minData,
                 delay = 0,
                 data,
@@ -2071,7 +2069,7 @@ const jQueryShim = require("./jQueryShim");
 
               // We never want to pass a raiseReconnect flag after a successful poll.  This is handled via the error function
               if (delay > 0) {
-                privateData.pollTimeoutId = setTimeout(function() {
+                privateData.pollTimeoutId = setTimeout(function () {
                   poll(instance, shouldReconnect);
                 }, delay);
               } else {
@@ -2079,7 +2077,7 @@ const jQueryShim = require("./jQueryShim");
               }
             },
 
-            error: function(data, textStatus) {
+            error: function (data, textStatus) {
               var error = signalR._.transportError(
                 signalR.resources.longPollFailed,
                 connection.transport,
@@ -2106,10 +2104,10 @@ const jQueryShim = require("./jQueryShim");
                 if (connection.state !== signalR.connectionState.reconnecting) {
                   connection.log(
                     "An error occurred using longPolling. Status = " +
-                      textStatus +
-                      ".  Response = " +
-                      data.responseText +
-                      "."
+                    textStatus +
+                    ".  Response = " +
+                    data.responseText +
+                    "."
                   );
                   $(instance).triggerHandler(events.onError, [error]);
                 }
@@ -2120,7 +2118,7 @@ const jQueryShim = require("./jQueryShim");
                 if (
                   (connection.state === signalR.connectionState.connected ||
                     connection.state ===
-                      signalR.connectionState.reconnecting) &&
+                    signalR.connectionState.reconnecting) &&
                   !transportLogic.verifyLastActive(connection)
                 ) {
                   return;
@@ -2133,7 +2131,7 @@ const jQueryShim = require("./jQueryShim");
                 }
 
                 // Call poll with the raiseReconnect flag as true after the reconnect delay
-                privateData.pollTimeoutId = setTimeout(function() {
+                privateData.pollTimeoutId = setTimeout(function () {
                   poll(instance, true);
                 }, that.reconnectDelay);
               }
@@ -2147,7 +2145,7 @@ const jQueryShim = require("./jQueryShim");
             // triggering reconnected.  This depends on the "error" handler of Poll to cancel this
             // timeout if it triggers before the Reconnected event fires.
             // The Math.min at the end is to ensure that the reconnect timeout does not overflow.
-            privateData.reconnectTimeoutId = setTimeout(function() {
+            privateData.reconnectTimeoutId = setTimeout(function () {
               fireReconnected(instance);
             }, Math.min(
               1000 * (Math.pow(2, reconnectErrors) - 1),
@@ -2158,17 +2156,17 @@ const jQueryShim = require("./jQueryShim");
       }, 250); // Have to delay initial poll so Chrome doesn't show loader spinner in tab
     },
 
-    lostConnection: function(connection) {
+    lostConnection: function (connection) {
       if (connection.pollXhr) {
         connection.pollXhr.abort("lostConnection");
       }
     },
 
-    send: function(connection, data) {
+    send: function (connection, data) {
       transportLogic.ajaxSend(connection, data);
     },
 
-    stop: function(connection) {
+    stop: function (connection) {
       /// <summary>Stops the long polling connection</summary>
       /// <param name="connection" type="signalR">The SignalR connection to stop</param>
 
@@ -2185,7 +2183,7 @@ const jQueryShim = require("./jQueryShim");
       }
     },
 
-    abort: function(connection, async) {
+    abort: function (connection, async) {
       transportLogic.ajaxAbort(connection, async);
     }
   };
@@ -2196,7 +2194,7 @@ const jQueryShim = require("./jQueryShim");
 
 /// <reference path="jquery.signalR.core.js" />
 
-(function($, undefined) {
+(function ($, undefined) {
   var eventNamespace = ".hubProxy",
     signalR = $.signalR;
 
@@ -2268,7 +2266,7 @@ const jQueryShim = require("./jQueryShim");
   }
 
   hubProxy.fn = hubProxy.prototype = {
-    init: function(connection, hubName) {
+    init: function (connection, hubName) {
       this.state = {};
       this.connection = connection;
       this.hubName = hubName;
@@ -2279,11 +2277,11 @@ const jQueryShim = require("./jQueryShim");
 
     constructor: hubProxy,
 
-    hasSubscriptions: function() {
+    hasSubscriptions: function () {
       return hasMembers(this._.callbackMap);
     },
 
-    on: function(eventName, callback) {
+    on: function (eventName, callback) {
       /// <summary>Wires up a callback to be invoked when a invocation request is received from the server hub.</summary>
       /// <param name="eventName" type="String">The name of the hub event to register the callback for.</param>
       /// <param name="callback" type="Function">The callback to be invoked.</param>
@@ -2299,7 +2297,7 @@ const jQueryShim = require("./jQueryShim");
       }
 
       // Map the callback to our encompassed function
-      callbackMap[eventName][callback] = function(e, data) {
+      callbackMap[eventName][callback] = function (e, data) {
         callback.apply(that, data);
       };
 
@@ -2308,7 +2306,7 @@ const jQueryShim = require("./jQueryShim");
       return that;
     },
 
-    off: function(eventName, callback) {
+    off: function (eventName, callback) {
       /// <summary>Removes the callback invocation request from the server hub for the given event name.</summary>
       /// <param name="eventName" type="String">The name of the hub event to unregister the callback for.</param>
       /// <param name="callback" type="Function">The callback to be invoked.</param>
@@ -2345,7 +2343,7 @@ const jQueryShim = require("./jQueryShim");
       return that;
     },
 
-    invoke: function(methodName) {
+    invoke: function (methodName) {
       /// <summary>Invokes a server hub method with the given arguments.</summary>
       /// <param name="methodName" type="String">The name of the server hub method.</param>
 
@@ -2360,7 +2358,7 @@ const jQueryShim = require("./jQueryShim");
           I: connection._.invocationCallbackId
         },
         d = $.Deferred(),
-        callback = function(minResult) {
+        callback = function (minResult) {
           var result = that._maximizeHubResponse(minResult),
             source,
             error;
@@ -2375,8 +2373,8 @@ const jQueryShim = require("./jQueryShim");
             } else if (!connection._.progressjQueryVersionLogged) {
               connection.log(
                 "A hub method invocation progress update was received but the version of jQuery in use (" +
-                  $.prototype.jquery +
-                  ") does not support progress updates. Upgrade to jQuery 1.7+ to receive progress notifications."
+                $.prototype.jquery +
+                ") does not support progress updates. Upgrade to jQuery 1.7+ to receive progress notifications."
               );
               connection._.progressjQueryVersionLogged = true;
             }
@@ -2393,10 +2391,10 @@ const jQueryShim = require("./jQueryShim");
 
             connection.log(
               that.hubName +
-                "." +
-                methodName +
-                " failed to execute. Error: " +
-                error.message
+              "." +
+              methodName +
+              " failed to execute. Error: " +
+              error.message
             );
             d.rejectWith(that, [error]);
           } else {
@@ -2421,15 +2419,15 @@ const jQueryShim = require("./jQueryShim");
       return d.promise();
     },
 
-    _maximizeHubResponse: function(minHubResponse) {
+    _maximizeHubResponse: function (minHubResponse) {
       return {
         State: minHubResponse.S,
         Result: minHubResponse.R,
         Progress: minHubResponse.P
           ? {
-              Id: minHubResponse.P.I,
-              Data: minHubResponse.P.D
-            }
+            Id: minHubResponse.P.I,
+            Data: minHubResponse.P.D
+          }
           : null,
         Id: minHubResponse.I,
         IsHubException: minHubResponse.H,
@@ -2463,12 +2461,12 @@ const jQueryShim = require("./jQueryShim");
 
   hubConnection.fn = hubConnection.prototype = $.connection();
 
-  hubConnection.fn.init = function(url, options) {
+  hubConnection.fn.init = function (url, options) {
     var settings = {
-        qs: null,
-        logging: false,
-        useDefaultPath: true
-      },
+      qs: null,
+      logging: false,
+      useDefaultPath: true
+    },
       connection = this;
 
     $.extend(settings, options);
@@ -2483,7 +2481,7 @@ const jQueryShim = require("./jQueryShim");
     connection._.invocationCallbacks = {};
 
     // Wire up the received handler
-    connection.received(function(minData) {
+    connection.received(function (minData) {
       var data, proxy, dataCallbackId, callback, hubName, eventName;
       if (!minData) {
         return;
@@ -2517,10 +2515,10 @@ const jQueryShim = require("./jQueryShim");
         // We received a client invocation request, i.e. broadcast from server hub
         connection.log(
           "Triggering client hub event '" +
-            data.Method +
-            "' on hub '" +
-            data.Hub +
-            "'."
+          data.Method +
+          "' on hub '" +
+          data.Hub +
+          "'."
         );
 
         // Normalize the names to lowercase
@@ -2536,7 +2534,7 @@ const jQueryShim = require("./jQueryShim");
       }
     });
 
-    connection.error(function(errData, origData) {
+    connection.error(function (errData, origData) {
       var callbackId, callback;
 
       if (!origData) {
@@ -2558,7 +2556,7 @@ const jQueryShim = require("./jQueryShim");
       }
     });
 
-    connection.reconnecting(function() {
+    connection.reconnecting(function () {
       if (connection.transport && connection.transport.name === "webSockets") {
         clearInvocationCallbacks(
           connection,
@@ -2567,7 +2565,7 @@ const jQueryShim = require("./jQueryShim");
       }
     });
 
-    connection.disconnected(function() {
+    connection.disconnected(function () {
       clearInvocationCallbacks(
         connection,
         "Connection was disconnected before invocation result was received."
@@ -2575,7 +2573,7 @@ const jQueryShim = require("./jQueryShim");
     });
   };
 
-  hubConnection.fn._maximizeClientHubInvocation = function(
+  hubConnection.fn._maximizeClientHubInvocation = function (
     minClientHubInvocation
   ) {
     return {
@@ -2586,7 +2584,7 @@ const jQueryShim = require("./jQueryShim");
     };
   };
 
-  hubConnection.fn._registerSubscribedHubs = function() {
+  hubConnection.fn._registerSubscribedHubs = function () {
     /// <summary>
     ///     Sets the starting event to loop through the known hubs and register any new hubs
     ///     that have been added to the proxy.
@@ -2595,12 +2593,12 @@ const jQueryShim = require("./jQueryShim");
 
     if (!connection._subscribedToHubs) {
       connection._subscribedToHubs = true;
-      connection.starting(function() {
+      connection.starting(function () {
         // Set the connection's data object with all the hub proxies with active subscriptions.
         // These proxies will receive notifications from the server.
         var subscribedHubs = [];
 
-        $.each(connection.proxies, function(key) {
+        $.each(connection.proxies, function (key) {
           if (this.hasSubscriptions()) {
             subscribedHubs.push({ name: key });
             connection.log("Client subscribed to hub '" + key + "'.");
@@ -2618,7 +2616,7 @@ const jQueryShim = require("./jQueryShim");
     }
   };
 
-  hubConnection.fn.createHubProxy = function(hubName) {
+  hubConnection.fn.createHubProxy = function (hubName) {
     /// <summary>
     ///     Creates a new proxy object for the given hub connection that can be used to invoke
     ///     methods on server hubs and handle client method invocation requests from the server.
@@ -2650,7 +2648,7 @@ const jQueryShim = require("./jQueryShim");
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 /// <reference path="jquery.signalR.core.js" />
-(function($) {
+(function ($) {
   $.signalR.version = "2.2.1";
 })(jQueryShim);
 
